@@ -2,6 +2,7 @@ import RutappContext from '@/context/RutappContext';
 import { AccionUsuarioType } from '@/context/types/AccionUsuarioType';
 import { DataMarkersType } from '@/context/types/DataMarkersType';
 import { MapCenterPosType } from '@/context/types/LocationType';
+import { MensajeSnackType } from '@/context/types/MensajeSnack';
 import { RepartosArrType } from '@/context/types/RepartosArrType';
 import { usePedirRepartos } from '@/hooks/pedirRepartos';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,22 +16,21 @@ const RepartiendoBtn = () => {
     const {dataMarkers,setDataMarkers} = useContext(RutappContext) as DataMarkersType;
     const {repartosArr,setRepartosArr} = useContext(RutappContext) as RepartosArrType;
     const {setMapCenterPos} = useContext(RutappContext) as MapCenterPosType;
-
+    const {setMensajeSnack} = useContext(RutappContext) as MensajeSnackType;
     const db = useSQLiteContext();
     const pedirRepartos = usePedirRepartos();
+    
 
     const detener = ()=>{
         salirDelReparto();
         setAccionUsuario(null);
     }
     const postergar = ()=>{
-        let arreglo = [...dataMarkers];
-        console.log(arreglo.length)
+      if(repartosArr.length >1 ){
+  let arreglo = [...dataMarkers];
         if(arreglo.length > 1) {
           setMapCenterPos({lat: arreglo[1].position.lat,lng: arreglo[1].position.lng});
         }
-
-
         arreglo.push(arreglo.splice(0, 1)[0]);
         async function reordenarArreglo() {
           const idsAsync = await AsyncStorage.getItem('ordenrepartos');
@@ -42,6 +42,10 @@ const RepartiendoBtn = () => {
         }
         reordenarArreglo()
         setDataMarkers(arreglo)
+      }else{
+        setMensajeSnack({bool: true, texto: "No puede postergar este envío ya que es el único que le queda por terminar"})
+      }
+      
     }
     const avanzar = ()=>{
         async function avanzarReparto() {   
@@ -68,26 +72,43 @@ const RepartiendoBtn = () => {
     mode="contained" 
     icon="motion-pause" 
     contentStyle={{ height: "100%" }} 
-    style={{ width: "33.3%", borderRadius: 0 }} 
-    buttonColor="#C62E2E" 
-    textColor="white" 
+    style={{ width: "33.3%", borderRadius: 0,
+      borderWidth: 1,
+      borderColor: "black"
+
+     }} 
+     labelStyle={{ fontSize: 13 }}
+    buttonColor="#f9706b" 
+    textColor="black" 
     onPress={detener}>DETENER</Button>
     
     <Button 
     mode="elevated" 
     icon={'page-next-outline'} 
     contentStyle={{ height: "100%" }} 
-    style={{ width: "33.3%", borderRadius: 0 }} 
-    disabled={repartosArr.length >1 ? false : true}
+    labelStyle={{ fontSize: 13 }}
+    textColor={repartosArr.length >1 ?'black':"grey"}
+    style={{ width: "33.3%", 
+      borderRadius: 0,      
+      borderWidth: 1,
+      borderColor: "black"
+     }} 
     onPress={postergar}>POSTERGAR</Button>
     <Button 
     mode="contained" 
     icon={accionUsuario ?"map-marker-check" :"chevron-right"}
     contentStyle={{ height: "100%" }} 
-    style={{ width: "33.3%", borderRadius: 0 }}
+    style={{ width: "33.3%", borderRadius: 0,
+            borderWidth: 1,
+      borderColor: "black",
+      backgroundColor: "#6bd39a"
+     }}
+     textColor='black'
+
+     labelStyle={{ fontSize: 13 }}
      onPress={avanzar}
     
-    >{accionUsuario ? "FINALIZAR":"AVANZAR"}</Button>
+    >{repartosArr.length > 1 ? "AVANZAR":"FINALIZAR"}</Button>
   </View>
   )
 }

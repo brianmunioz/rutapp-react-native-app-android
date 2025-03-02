@@ -9,6 +9,7 @@ import { MarkerTelType } from '@/context/types/MarkerTelType';
 import { AccionUsuarioType } from '@/context/types/AccionUsuarioType';
 import { BoolLocationType } from '@/context/types/BoolLocationType';
 import { View } from 'react-native';
+import { useGetMyLocation } from '@/hooks/getMyLocation';
 
 
 const MiUbicacionBtn = () => {
@@ -21,29 +22,7 @@ const MiUbicacionBtn = () => {
     const {accionUsuario,setAccionUsuario} = useContext(RutappContext) as AccionUsuarioType;
     const {setBoolLocation} = useContext(RutappContext)  as BoolLocationType;
 
-      const getSingleLocationAsync = async () => {
-        try {
-          // Solicita permiso de ubicación
-          const { status } = await Location.requestForegroundPermissionsAsync();
-          if (status !== 'granted') {
-            console.log('Permiso de ubicación denegado');
-            return null; // Retorna null si el permiso fue denegado
-          }
-      
-          // Obtén la ubicación actual solo una vez
-          const { coords } = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.High,
-          });
-          
-          return {
-            lat: coords.latitude,
-            lng: coords.longitude,
-          };
-        } catch (error) {
-          console.error("Error al obtener la ubicación única: ", error);
-          return null;
-        }
-      };
+    const getSingleLocationAsync = useGetMyLocation();
      const getLocationAsync = async () => {
       const subscription = await Location.watchPositionAsync(
       {
@@ -88,12 +67,26 @@ const MiUbicacionBtn = () => {
         }
       },[followMyLocation])
     const miUbicacion = ()=>{
+      getSingleLocationAsync().then(async e=>
+        {
+          if(e != null){
+            setOwnPosition(e);
+            setMapCenterPos(e);
+            setFollowMyLocation(true);
+            
+          }
+  
+        }
+  
+        );
         if (ownPosition) {
             setFollowMyLocation(true)
             setMapCenterPos(actualPos);
             setMarkerTel({ id: 0, show: false, tel: 0 })
+            setZoom(17);
             if (accionUsuario != 'repartiendo') setAccionUsuario(null);
             setBoolLocation(true);
+            
           }
     }
   return (

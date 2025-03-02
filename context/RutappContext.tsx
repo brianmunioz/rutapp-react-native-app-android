@@ -15,8 +15,7 @@ export function RutappContextProvider({ children }: Props) {
   
   const [mensaje, setMensaje] = useState<Mensaje>({mensaje: "",tag: ""});
   const [boolLocation, setBoolLocation] = useState<boolean>(false);
-    const [ownPosition, setOwnPosition] = useState<null | Location>(null)
-  
+  const [ownPosition, setOwnPosition] = useState<null | Location>(null);  
   const [zoom, setZoom] = useState<number>(3);
   const [accionUsuario, setAccionUsuario] = useState<string | null>(null)
   const [editar, setEditar] = useState<boolean>(false);
@@ -31,16 +30,9 @@ export function RutappContextProvider({ children }: Props) {
   const [markerTel, setMarkerTel] = useState({ id: 0, show: false, tel: 0 })
   const [modalVisible, setModalVisible] = useState(false);
   const [repartoBool, setRepartoBool] = useState(false);
-  const initPosWithoutLocation: LocationCoordenadas = 
-  modoContacto ?
-   contactosArr.length > 0 ?
-    { lat: contactosArr[contactosArr.length - 1].lat, lng: contactosArr[contactosArr.length - 1].lng } 
-    : { lat: -35.103034508838604, lng: -59.50661499922906 }
-    : repartosArr.length > 0 ?
-     { lat: repartosArr[repartosArr.length - 1].lat, lng: repartosArr[repartosArr.length - 1].lng } :
-      { lat: -35.103034508838604, lng: -59.50661499922906 };
-    const [mapCenterPos, setMapCenterPos] = useState<LocationCoordenadas>(initPosWithoutLocation);
-    const [actualPos, setActualPos] = useState<LocationCoordenadas>(initPosWithoutLocation);
+
+    const [mapCenterPos, setMapCenterPos] = useState<LocationCoordenadas>( { lat: -35.103034508838604, lng: -59.50661499922906 });
+    const [actualPos, setActualPos] = useState<LocationCoordenadas>( { lat: -35.103034508838604, lng: -59.50661499922906 });
   
 
     return (

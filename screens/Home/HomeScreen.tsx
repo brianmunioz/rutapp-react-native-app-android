@@ -8,12 +8,14 @@ import MyMap from '@/components/MyMap';
 import TextoDeAccion from '@/components/TextoDeAccion';
 import RutappContext from '@/context/RutappContext';
 import { AccionUsuarioType } from '@/context/types/AccionUsuarioType';
+import { ContactosArrType } from '@/context/types/ContactosArrType';
 import { EditarType } from '@/context/types/EditarType';
 import { FollowMyLocationType } from '@/context/types/FollowMyLocationType';
-import { MapCenterPosType, OwnPositionType } from '@/context/types/LocationType';
+import { LocationCoordenadas, MapCenterPosType, OwnPositionType } from '@/context/types/LocationType';
 import { MensajeSnackType } from '@/context/types/MensajeSnack';
 import { ModalVisibleType } from '@/context/types/ModalVisibleType';
 import { ModoContactoType } from "@/context/types/ModoContactoType";
+import { RepartosArrType } from '@/context/types/RepartosArrType';
 import { UbicacionSeleccionadaType } from '@/context/types/UbicacionSeleccionadaType';
 import { ZoomType } from '@/context/types/ZoomType';
 import { useGetMyLocation } from '@/hooks/getMyLocation';
@@ -35,45 +37,44 @@ const HomeScreen = () => {
 
   const { editar } = useContext(RutappContext) as EditarType;
   const { ubicacionSeleccionada } = useContext(RutappContext) as UbicacionSeleccionadaType;
-  const {ownPosition, setOwnPosition} = useContext(RutappContext) as  OwnPositionType;
+  const { setOwnPosition} = useContext(RutappContext) as  OwnPositionType;
   const {setMapCenterPos} = useContext(RutappContext) as  MapCenterPosType;
-  const {followMyLocation,setFollowMyLocation} = useContext(RutappContext) as FollowMyLocationType;
-  const{ zoom,setZoom} = useContext(RutappContext) as ZoomType;
+  const {setFollowMyLocation} = useContext(RutappContext) as FollowMyLocationType;
+  const {contactosArr} = useContext(RutappContext) as ContactosArrType;
+  const {repartosArr} = useContext(RutappContext) as RepartosArrType;
 
+  const initPosWithoutLocation: LocationCoordenadas = 
+  modoContacto ?
+   contactosArr.length > 0 ?
+    { lat: contactosArr[contactosArr.length - 1].lat, lng: contactosArr[contactosArr.length - 1].lng } 
+    : { lat: -35.103034508838604, lng: -59.50661499922906 }
+    : repartosArr.length > 0 ?
+     { lat: repartosArr[repartosArr.length - 1].lat, lng: repartosArr[repartosArr.length - 1].lng } :
+      { lat: -35.103034508838604, lng: -59.50661499922906 };
   const getSingleLocationAsync = useGetMyLocation();
+  useEffect(()=>{
+    setMapCenterPos(initPosWithoutLocation);
+    getSingleLocationAsync().then(async e=>
+         {
+           if(e != null){
+             setOwnPosition(e);
+             setMapCenterPos(e);
+             setFollowMyLocation(true)
+           }
+   
+         }
+   
+         );
+     },[])
   useEffect(() => {
+   
     if (modoContacto) {
       pedirContactos();
     } else {
       pedirRepartos();
     }
   }, [modoContacto])
-  useEffect(()=>{
-    if(!ownPosition || ownPosition == null) {
-      
-      getSingleLocationAsync().then(async e=>
-      {
-        if(e != null){
-          setOwnPosition(e);
-          setMapCenterPos(e);
-          setFollowMyLocation(true)
-        }
 
-      }
-
-      );
-    };
-
-    if(followMyLocation != false && ownPosition) {
-      
-      setMapCenterPos({
-        lat: ownPosition.lat,
-        lng: ownPosition.lng,
-      });
-     
-      setZoom(17)
-    }
-  },[followMyLocation])
   return (
     <View
       style={styles.container}>
