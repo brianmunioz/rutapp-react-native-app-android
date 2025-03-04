@@ -1,17 +1,22 @@
 import RutappContext from '@/context/RutappContext'
+import { EditarType } from '@/context/types/EditarType';
 import { ModoContactoType } from '@/context/types/ModoContactoType';
+import { useResetTodo } from '@/hooks/resetTodo';
 import React, { useContext } from 'react'
 import { View } from 'react-native';
 import { Button, Icon, Text } from 'react-native-paper'
 
 
 const CambiarModoBtn = () => {
-    const {modoContacto, setModoContacto } = useContext(
-        RutappContext
-      ) as ModoContactoType;
+    const {modoContacto, setModoContacto } = useContext(RutappContext) as ModoContactoType;
+    const resetTodo = useResetTodo();
+    const {setEditar} = useContext(RutappContext) as EditarType;
     
     const cambiarDeModo = ()=>{
+        resetTodo();
+        setEditar(false);
         setModoContacto(!modoContacto);
+
     }
   return (
     <View style={{flex:1,backgroundColor: "#FFFCF0", borderColor: "black", borderWidth: 1}} >

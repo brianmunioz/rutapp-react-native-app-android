@@ -67,9 +67,10 @@ setEditar(false);
           placeholder="Search"
           onChangeText={(text) => buscar(text)}
           value={search}
+          style={{backgroundColor: "#FFFCF0", borderWidth: 1, borderColor: "black"}}
         />
         {contactos.length >0 ? 
-          contactos.map((e,index) => <Card key={e.id} style={{ width: "100%" }}>
+          contactos.map((e,index) => <Card key={e.id} style={{ width: "100%", borderWidth: 1, borderColor: "black", backgroundColor: "#FFFCF0" }}>
             <Card.Title
               title={e.nombre}
               subtitle={e.direccion}
@@ -92,7 +93,7 @@ setEditar(false);
         }
       </View>
       <Portal>
-        <Dialog visible={eliminarModal.bool} onDismiss={() => setEliminarModal({ ...eliminarModal, bool: !eliminarModal.bool })}>
+        <Dialog style={{borderWidth: 1, borderColor: "black", backgroundColor: "#FFFCF0" }}visible={eliminarModal.bool} onDismiss={() => setEliminarModal({ ...eliminarModal, bool: !eliminarModal.bool })}>
           <Dialog.Title>{eliminando ? "Eliminando...": "Eliminar contacto"}</Dialog.Title>
           <Dialog.Content>
             {eliminando  && <ActivityIndicator/> }

@@ -20,6 +20,7 @@ const RepartiendoBtn = () => {
     const db = useSQLiteContext();
     const pedirRepartos = usePedirRepartos();
     
+    
 
     const detener = ()=>{
         salirDelReparto();
@@ -61,10 +62,13 @@ const RepartiendoBtn = () => {
           avanzarReparto();
           pedirRepartos();    
           if (repartosArr.length <=1) {
+            setMensajeSnack({bool:true,texto: "¡Finalizaste todo tu recorrido!"});
+
             setRepartosArr([]);
             salirDelReparto();
             setAccionUsuario(null)
           }
+          
     }
   return (
     <View style={{ position: "absolute", bottom: 0, flexDirection: "row", justifyContent: "center", height: 50 }}>

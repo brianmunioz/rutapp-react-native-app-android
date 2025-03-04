@@ -70,7 +70,7 @@ setEditar(false);
       <View style={{ flexDirection: "column", gap: 10, paddingBottom:20,justifyContent: "center", alignItems: "center", width: "100%" }} >
        
         {contactos.length >0 ? 
-          contactos.map((e,index) => <Card key={e.id} style={{ width: "100%" }}>
+          contactos.map((e,index) => <Card key={e.id} style={{ width: "100%",borderWidth: 1, borderColor: "black", backgroundColor: "#FFFCF0" }}>
             <Card.Title
               title={e.nombre}
               subtitle={e.direccion}
@@ -99,7 +99,6 @@ setEditar(false);
             <Button mode="outlined"  disabled={index == (repartosArr.length-1)? true : false}   onPress={() =>  {
                const swapWithNext = (index: number) => {
                 setContactos(arr => {
-                    // Verifica que el índice está en rango y que no es el último elemento
                     if (index < 0 || index >= arr.length - 1) return arr;
             
                     const newArr = [...arr];
@@ -125,7 +124,7 @@ setEditar(false);
         }
       </View>
       <Portal>
-        <Dialog visible={eliminarModal.bool} onDismiss={() => setEliminarModal({ ...eliminarModal, bool: !eliminarModal.bool })}>
+        <Dialog style={{borderWidth: 1, borderColor: "black", backgroundColor: "#FFFCF0" }}visible={eliminarModal.bool} onDismiss={() => setEliminarModal({ ...eliminarModal, bool: !eliminarModal.bool })}>
           <Dialog.Title>{eliminando ? "Eliminando...": "Eliminar reparto"}</Dialog.Title>
           <Dialog.Content>
             {eliminando  && <ActivityIndicator/> }

@@ -17,6 +17,7 @@ import { useResetTodo } from '@/hooks/resetTodo';
 const CrearReparto: React.FC = () => {
   const {setModalVisible} = useContext(RutappContext) as ModalVisibleType;
   const {contactosArr} = useContext(RutappContext) as ContactosArrType;
+  const [creado, setCreado] = useState(false);
   const {ubicacionSeleccionada} = useContext(RutappContext) as UbicacionSeleccionadaType;
   const {repartoConContacto} = useContext(RutappContext) as RepartoConContactoType;
   const [mensaje, setMensaje] = useState({ bool: false, texto: "", error: true });
@@ -57,33 +58,29 @@ const CrearReparto: React.FC = () => {
       setMensaje({ bool: true, texto: "Debe seleccionar un contacto para poder crear el reparto", error: true });
     }
     else {
-
+      if(!creado){
       let telefono = data.area && data.telefono ? data.area + "" + data.telefono : null;
       let lat = seleccionContacto ? data.lat : ubicacionSeleccionada[0].position.lat;
       let lng = seleccionContacto ? data.lng : ubicacionSeleccionada[0].position.lng
       if (seleccionContacto) {
         telefono = data.telefono;
       }
-      console.log("crear reparto nro."+1)
       const fecha = new Date().toISOString().slice(0, 19).replace('T', ' '); // Formato YYYY-MM-DD HH:MM:SS      //agregar 3 campos mas para que funcione
-      console.log("crear reparto nro."+2)
       const response = await db.runAsync('INSERT INTO repartos (nombre,direccion,telefono,tipo_contacto,descripcion,lat,lng,IDContacto,fecha,finalizado) VALUES (?,?,?,?,?,?,?,?,?,?)', data.nombre, data.direccion, 2915664567, data.tipo, data.descripcion, lat, lng, data.IDContacto, fecha, false);
-      console.log("crear reparto nro."+3)
 
       if (response && response?.lastInsertRowId) {
         const idsAsync = await AsyncStorage.getItem('ordenrepartos');
 
         let ids: number[] = idsAsync && idsAsync !== null ? JSON.parse(idsAsync) : [];
         ids.push(response.lastInsertRowId)
-        console.log("crear reparto nro."+4)
-
         await AsyncStorage.setItem('ordenrepartos', JSON.stringify(ids))
         setMensaje({ bool: true, texto: "Reparto creado con éxito, en breve se dirigirá a la vista de repartos", error: false })
+        setCreado(true);
         setTimeout(() => {
-          console.log("crear reparto nro."+5)
-
-          resetTodo()
+          setCreado(false);
+          resetTodo();
         }, 1500)
+      }
       } 
 
 
